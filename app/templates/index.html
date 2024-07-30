@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Video Notes</title>
+    <link rel="stylesheet" href="/static/styles/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>YouTube Video Notes Generator</h1>
+      <form id="videoForm">
+        <div class="form-group">
+          <label for="youtubeLink">YouTube URL:</label>
+          <input type="text" id="youtubeLink" name="youtubeLink" required />
+        </div>
+        <div class="form-group">
+          <label for="subject">Topic to focus on from the video:</label>
+          <input type="text" id="subject" name="subject" />
+        </div>
+        <button type="submit">Generate Notes</button>
+      </form>
+      <div id="generating" class="generating">Generating...</div>
+      <div id="notes" class="notes"></div>
+      <div id="error" class="error"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("videoForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          document.getElementById("generating").style.display = "block";
+          document.getElementById("notes").innerHTML = "";
+          document.getElementById("error").innerHTML = "";
+
+          const youtubeLink = document.getElementById("youtubeLink").value;
+          const subject = document.getElementById("subject").value;
+
+          fetch("/convert_video/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              youtube_link: youtubeLink,
+              subject: subject,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("generating").style.display = "none";
+              if (data.notes) {
+                document.getElementById(
+                  "notes"
+                ).innerHTML = `<h2>Generated Notes</h2><pre>${data.notes}</pre>`;
+              } else {
+                document.getElementById("error").innerHTML =
+                  "Error: No notes generated.";
+              }
+            })
+            .catch((error) => {
+              document.getElementById("generating").style.display = "none";
+              document.getElementById("error").innerHTML = `Error: ${error}`;
+            });
+        });
+    </script>
+  </body>
+</html>
