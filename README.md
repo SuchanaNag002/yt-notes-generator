@@ -26,7 +26,7 @@ This project provides a FastAPI application that generates detailed notes or sum
 
    ```bash
    git clone https://github.com/yourusername/yt-notes-generator.git
-   cd your-repo-name
+   cd yt-notes-generator
    ```
 
 2. **Create and activate a virtual environment:**
